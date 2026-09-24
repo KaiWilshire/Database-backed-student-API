@@ -7,12 +7,14 @@ connectDB();
 app.use(express.json());
 app.get("/", (req, res) => {
  res.send(`
-    <h1>Database-backed Student API</h1>
-    <p>This API uses MongoDB instead of students.json.</p>
+    <h1>Complete Database-backed Student REST API</h1>
+    <p>This API supports GET, POST, PATCH, and DELETE.</p>
     <ul>
     <li>GET /api/students</li>
-    <li>POST /api/students</li>
     <li>GET /api/students/:id</li>
+    <li>POST /api/students</li>
+    <li>PATCH /api/students/:id</li>
+    <li>DELETE /api/students/:id</li>
     </ul>
  `);
 });
@@ -43,6 +45,50 @@ app.get("/api/students/:id", async (req, res) => {
     res.status(404).json({ error: "Invalid student ID" });
  }
 });
+
+app.patch("/api/students/:id", async (req, res) => {
+  try {
+    const updated = await Student.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true
+      }
+    );
+
+    if (!updated) {
+      return res.status(404).json({
+        error: "Student not found"
+      });
+    }
+
+    res.json(updated);
+  } catch (error) {
+    res.status(400).json({
+      error: error.message
+    });
+  }
+});
+
+app.delete("/api/students/:id", async (req, res) => {
+  try {
+    const deleted = await Student.findByIdAndDelete(req.params.id);
+
+    if (!deleted) {
+      return res.status(404).json({
+        error: "Student not found"
+      });
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    res.status(400).json({
+      error: "Invalid student ID"
+    });
+  }
+});
+
 app.use((req, res) => {
     res.status(404).json({ error: "Route not found" });
 });

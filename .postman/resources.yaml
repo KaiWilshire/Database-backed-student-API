@@ -1,0 +1,8 @@
+workspace:
+  id: ce9f2bd1-f8a1-4574-8142-af7438fd1042
+localResources:
+  specs:
+    - ../postman/specs/REST Student API/REST Student API.json
+resourceNameMappings:
+  specs:
+    - ../postman/specs/REST Student API/REST Student API.json: REST Student API
